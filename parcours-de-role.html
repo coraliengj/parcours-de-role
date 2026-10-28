@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mon parcours de rôle</title>
+<!--
+  PAGE AUTONOME : un seul fichier, aucune dépendance, fonctionne sans Claude.
+  Pour l'héberger : déposez ce fichier tel quel sur n'importe quel hébergement de pages (GitHub Pages, Netlify, votre site, l'ENT...).
+
+  Les réponses des élèves restent dans leur navigateur (sauvegarde automatique) et peuvent être
+  téléchargées, copiées ou imprimées en PDF.
+
+  OPTION : recevoir les réponses.
+  Renseignez CONFIG.endpoint avec l'adresse d'un service de formulaire (Formspree, Basin, un script
+  Google Apps Script...) : un bouton « Envoyer à ma professeure » apparaît alors, et chaque envoi
+  arrive sous forme de message (texte complet + données). Laissez vide pour ne pas l'afficher.
+-->
+<style>
+  :root{
+    --ink:#1c1a3a;
+    --ink-soft:#4a4868;
+    --paper:#f6f6fb;
+    --card:#ffffff;
+    --line:#dcdbea;
+    --violet:#4a3fa0;
+    --violet-soft:#ece9fb;
+    --green:#2c9a66;
+    --amber:#eda12e;
+    --red:#d6444a;
+    --dim:#3a3858;
+    --display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+  :focus-visible{outline:3px solid var(--violet);outline-offset:2px;border-radius:4px}
+
+  /* ---------- en-tête ---------- */
+  .top{background:var(--ink);color:#fff;padding:34px 20px 0}
+  .wrap{max-width:860px;margin:0 auto}
+  .top h1{font-family:var(--display);font-weight:600;font-size:clamp(30px,6vw,46px);line-height:1.1;margin:0 0 8px;letter-spacing:-.01em}
+  .top p{margin:0 0 22px;color:#cfcde8;max-width:56ch}
+  .ident{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+  .ident label{display:block;font-size:13px;color:#cfcde8;margin-bottom:3px}
+  .ident input{width:100%;padding:9px 11px;border-radius:8px;border:1px solid #5b5890;background:#2a2850;color:#fff;font:inherit;font-size:16px}
+  .ident input::placeholder{color:#9b99c4}
+  .tabs{display:flex;gap:6px}
+  .tab{appearance:none;border:0;background:#2a2850;color:#cfcde8;font:inherit;font-weight:600;padding:12px 18px;border-radius:10px 10px 0 0;cursor:pointer}
+  .tab[aria-selected="true"]{background:var(--paper);color:var(--ink)}
+  .tab:hover:not([aria-selected="true"]){background:#37346a;color:#fff}
+
+  main{padding:28px 20px 90px}
+  section.panel[hidden]{display:none}
+
+  h2{font-family:var(--display);font-size:clamp(24px,4.5vw,32px);line-height:1.15;margin:0 0 6px}
+  h3{font-family:var(--display);font-size:22px;line-height:1.2;margin:0 0 4px}
+  .lead{color:var(--ink-soft);margin:0 0 22px;max-width:62ch}
+  .hint{font-size:15px;color:var(--ink-soft);margin:0 0 12px}
+
+  /* ---------- test : feu + score ---------- */
+  .stage{position:sticky;top:0;z-index:5;background:var(--paper);padding:12px 0;margin:0 0 12px;border-bottom:1px solid var(--line)}
+  .stage-in{display:flex;gap:18px;align-items:center}
+  .lights{display:flex;gap:9px;background:var(--ink);padding:10px 14px;border-radius:40px;flex:none}
+  .lamp{width:30px;height:30px;border-radius:50%;background:var(--dim);transition:background .25s,box-shadow .25s}
+  .lamp.on.g{background:var(--green);box-shadow:0 0 16px 4px rgba(44,154,102,.55)}
+  .lamp.on.a{background:var(--amber);box-shadow:0 0 16px 4px rgba(237,161,46,.6)}
+  .lamp.on.r{background:var(--red);box-shadow:0 0 16px 4px rgba(214,68,74,.55)}
+  .verdict{min-width:0}
+  .verdict .score{font-family:var(--display);font-size:22px;font-weight:600;line-height:1.2}
+  .verdict .what{font-size:15px;color:var(--ink-soft);margin:2px 0 0}
+
+  .manche{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px 8px;margin:0 0 16px}
+  .manche .tag{display:inline-block;font-size:13px;font-weight:600;border-radius:99px;padding:2px 10px;background:var(--violet-soft);color:var(--violet);margin-bottom:8px}
+  .manche.alerte .tag{background:#fbe6e7;color:#a42a30}
+  .check{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-top:1px solid #efeef7;cursor:pointer}
+  .check:first-of-type{border-top:0}
+  .check input{flex:none;width:22px;height:22px;margin-top:2px;accent-color:var(--violet);cursor:pointer}
+  .manche.alerte .check input{accent-color:var(--red)}
+
+  .result{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:8px}
+  .result table{width:100%;border-collapse:collapse;font-size:15px}
+  .result th,.result td{text-align:left;padding:8px 10px;border-top:1px solid #efeef7;vertical-align:top}
+  .result th{border-top:0;color:var(--ink-soft);font-weight:600}
+  .result tr.me td{background:var(--violet-soft)}
+  .gold{margin:14px 0 0;font-size:15px}
+
+  /* ---------- atelier ---------- */
+  .q{display:block;margin:0 0 16px}
+  .q span{display:block;font-weight:600;margin-bottom:5px}
+  textarea{width:100%;min-height:74px;padding:10px 12px;border:1px solid #c9c7de;border-radius:10px;font:inherit;font-size:16px;line-height:1.5;resize:vertical;background:#fff;color:var(--ink)}
+  textarea:focus{border-color:var(--violet)}
+  .note-final .q span{font-weight:500;color:var(--ink-soft)}
+  .count{font-size:14px;color:var(--ink-soft);margin:6px 0 0}
+  .nextlink{display:inline-block;margin-top:6px}
+
+  /* ---------- barre d'actions ---------- */
+  .bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 16px;z-index:10}
+  .bar-in{max-width:860px;margin:0 auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .btn{appearance:none;border:1px solid var(--violet);background:#fff;color:var(--violet);font:inherit;font-weight:600;font-size:15px;padding:8px 14px;border-radius:9px;cursor:pointer}
+  .btn:hover{background:var(--violet-soft)}
+  .btn.main{background:var(--violet);color:#fff}
+  .btn.main:hover{background:#3b3188}
+  .btn.ghost{border-color:#c9c7de;color:var(--ink-soft)}
+  .status{margin-left:auto;font-size:14px;color:var(--ink-soft)}
+  .privacy{font-size:14px;color:var(--ink-soft);margin:26px 0 0}
+
+  @media (max-width:640px){
+    body{font-size:16px}
+    .ident{grid-template-columns:1fr}
+    .stage-in{gap:12px}
+    .lamp{width:24px;height:24px}
+    .status{width:100%;margin-left:0}
+    .result th:nth-child(3),.result td:nth-child(3){display:none}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .top p,.tabs,.bar,.stage .lights,.hint,.nextlink,.privacy{display:none}
+    .top{background:#fff;color:#000;padding:0}
+    .top h1{color:#000}
+    .ident label{color:#444}
+    .ident input{background:#fff;color:#000;border:1px solid #999}
+    section.panel[hidden]{display:block}
+    .stage{position:static}
+    .manche,.result{break-inside:avoid;border-color:#bbb}
+    main{padding:10px 0}
+    textarea{border:1px solid #bbb;resize:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <h1>Mon parcours de rôle</h1>
+    <p>Deux outils pour t’aider à choisir ton rôle, puis à écrire ta note d’intention. Réponds vite, honnêtement : personne ne te note.</p>
+    <div class="ident">
+      <div><label for="f-name">Ton prénom</label><input id="f-name" data-ident="name" autocomplete="given-name" placeholder="Prénom"></div>
+      <div><label for="f-role">Le rôle</label><input id="f-role" data-ident="role" placeholder="Nom du personnage"></div>
+      <div><label for="f-piece">La pièce</label><input id="f-piece" data-ident="piece" placeholder="Titre et auteur·rice"></div>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Les deux outils">
+      <button class="tab" role="tab" id="tab-test" aria-controls="panel-test" aria-selected="true">1 · Le test du rôle</button>
+      <button class="tab" role="tab" id="tab-atelier" aria-controls="panel-atelier" aria-selected="false">2 · L’atelier de ma note</button>
+      <button class="tab" role="tab" id="tab-montage" aria-controls="panel-montage" aria-selected="false">3 · L’atelier du montage</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<div class="wrap">
+
+  <!-- ====================== TEST ====================== -->
+  <section class="panel" id="panel-test" role="tabpanel" aria-labelledby="tab-test">
+    <h2>Le test du rôle : feu vert, orange ou rouge ?</h2>
+    <p class="lead">Tu hésites sur un rôle ? Coche ce qui est vrai pour toi, le feu s’allume tout seul. Tu hésites entre deux rôles ? Fais le test pour chacun (change le nom du rôle en haut) et compare. Un feu rouge est une bonne nouvelle s’il t’évite des semaines de travail dans la mauvaise direction.</p>
+
+    <div class="stage" aria-live="polite">
+      <div class="stage-in">
+        <div class="lights" aria-hidden="true"><span class="lamp r" id="lamp-r"></span><span class="lamp a" id="lamp-a"></span><span class="lamp g" id="lamp-g"></span></div>
+        <div class="verdict">
+          <div class="score" id="score">Coche une case pour allumer le feu.</div>
+          <p class="what" id="what"></p>
+        </div>
+      </div>
+    </div>
+
+    <div id="test-root"></div>
+
+    <div class="result">
+      <h3>Ce que veulent dire les feux</h3>
+      <table>
+        <thead><tr><th>Score final</th><th>Ton feu</th><th>Ce que ça veut dire</th><th>Et maintenant ?</th></tr></thead>
+        <tbody>
+          <tr id="row-g"><td>11 à 15</td><td>Vert</td><td>Le rôle te donne de la matière, de la proximité et de l’envie.</td><td>Passe à l’atelier de ta note d’intention.</td></tr>
+          <tr id="row-a"><td>6 à 10</td><td>Orange</td><td>Il y a quelque chose, mais un point est fragile.</td><td>Regarde tes cases non cochées : c’est là qu’il faut creuser. Relis la pièce en entier avant de décider.</td></tr>
+          <tr id="row-r"><td>5 ou moins</td><td>Rouge</td><td>Ce rôle ne te sert pas, pour l’instant.</td><td>Garde-le pour plus tard. Cherche une autre piste ou une autre porte d’entrée : un autre personnage de la pièce, un autre moment du rôle.</td></tr>
+        </tbody>
+      </table>
+      <p class="gold"><strong>Règle d’or :</strong> ton feu ne peut pas être vert, même avec un très bon score, si tu n’as coché ni « Il bouge » ni « J’ai envie de comprendre ce personnage », ou si tu as coché « Le rôle est surtout narratif ».</p>
+    </div>
+    <p><a class="nextlink" href="#" data-goto="atelier"><strong>Feu vert ou orange ? Passe à l’atelier de ta note.</strong></a></p>
+  </section>
+
+  <!-- ====================== ATELIER ====================== -->
+  <section class="panel" id="panel-atelier" role="tabpanel" aria-labelledby="tab-atelier" hidden>
+    <h2>Atelier : préparer ma note d’intention</h2>
+    <p class="lead">Cinq manches pour fabriquer ta note sans page blanche. Réponds en brouillon : phrases courtes, ratures permises. À la fin, tu assembles tes réponses en une page.</p>
+    <p class="hint">Rappel : on travaille avec ce que le texte et le personnage demandent, pas avec ta vie privée. Tu cherches des points de résonance, tu n’as rien d’intime à raconter.</p>
+    <div id="atelier-root"></div>
+
+    <div class="manche note-final">
+      <span class="tag">Manche finale</span>
+      <h3>Assemble ta note</h3>
+      <p class="hint">Reprends tes réponses et complète ces cinq phrases. Mises bout à bout, elles font ta première version.</p>
+      <div id="final-root"></div>
+      <p class="count" id="count"></p>
+    </div>
+
+    <div class="manche">
+      <span class="tag">Avant de me la rendre</span>
+      <h3>Relis-toi</h3>
+      <div id="relis-root"></div>
+    </div>
+    <p><a class="nextlink" href="#" data-goto="montage"><strong>Note terminée ? Passe à l’atelier du montage.</strong></a></p>
+  </section>
+
+  <!-- ====================== MONTAGE ====================== -->
+  <section class="panel" id="panel-montage" role="tabpanel" aria-labelledby="tab-montage" hidden>
+    <h2>Atelier : construire mon montage</h2>
+    <p class="lead">Ton montage dure une dizaine de minutes. Ici, tu choisis ce qui reste, ce qui part, et dans quel ordre. Garde ton axe sous les yeux : chaque extrait doit y répondre.</p>
+    <div id="montage-root"></div>
+    <p><a class="nextlink" href="#" data-goto="atelier"><strong>Retour à l’atelier de ma note.</strong></a></p>
+  </section>
+
+  <p class="privacy">Tes réponses se sauvegardent toutes seules, sur cet appareil et dans ce navigateur. Pour les garder ou me les envoyer, utilise les boutons en bas de l’écran.</p>
+</div>
+</main>
+
+<div class="bar">
+  <div class="bar-in">
+    <button class="btn main" id="b-dl">Télécharger mes réponses</button>
+    <button class="btn" id="b-copy">Copier</button>
+    <button class="btn" id="b-print">Imprimer / PDF</button>
+    <button class="btn main" id="b-send" hidden>Envoyer à ma professeure</button>
+    <button class="btn ghost" id="b-reset">Tout effacer</button>
+    <span class="status" id="status" role="status"></span>
+  </div>
+</div>
+
+<script>
+/* ============ RÉGLAGES ============ */
+const CONFIG = {
+  endpoint: "",          // ex. "https://formspree.io/f/xxxxxxxx" — vide = pas de bouton d'envoi
+  storageKey: "parcours-de-role-v1"
+};
+
+/* ============ CONTENU ============ */
+const TEST = [
+  {id:"m1", title:"Manche 1 : le coup de cœur", tag:"Une case cochée = 1 point", sign:1, items:[
+    ["c1","Je peux dire en une phrase ce que ce personnage veut."],
+    ["c2","Il y a une réplique que j’ai envie de dire à voix haute, tout de suite."],
+    ["c3","Je me suis surpris·e à penser à lui ou à elle en dehors des cours."],
+    ["c4","Quand je lis ses scènes, je ressens quelque chose (rire, colère, malaise, tendresse), même si je ne sais pas encore dire quoi."],
+    ["c5","J’ai envie de comprendre ce personnage, pas seulement de bien le jouer."],
+    ["c6","Je peux imaginer deux façons différentes de jouer sa scène principale."]
+  ]},
+  {id:"m2", title:"Manche 2 : la distance", tag:"Une case cochée = 1 point", sign:1, items:[
+    ["d1","Son âge est proche du mien, ou je pourrais le jouer sans artifice."],
+    ["d2","Je retrouve une de ses préoccupations dans les miennes, sans avoir à me raconter."],
+    ["d3","Je peux trouver des analogies concrètes avec ce qu’il ou elle vit."],
+    ["d4","Sa situation est assez concrète pour que je la comprenne sans de longues recherches."]
+  ]},
+  {id:"m3", title:"Manche 3 : la matière pour 10 minutes", tag:"Une case cochée = 1 point", sign:1, items:[
+    ["e1","Il bouge : le personnage n’est pas au même endroit au début et à la fin de la pièce."],
+    ["e2","Je repère au moins trois moments forts pour mon montage."],
+    ["e3","Je peux isoler des extraits qui se comprennent sans la pièce entière."],
+    ["e4","La majorité du rôle est en dialogue, dans un style direct : il ou elle parle à des partenaires plutôt que de raconter."],
+    ["e5","La langue du texte ne me bloque pas."]
+  ]},
+  {id:"m4", title:"Manche 4 : les signaux d’alerte", tag:"Une case cochée = 1 point en moins", sign:-1, alert:true, items:[
+    ["a1","Je choisis ce rôle surtout parce qu’il est beau ou célèbre."],
+    ["a2","Je choisis ce rôle pour me montrer, plutôt que pour le chercher."],
+    ["a3","Je n’ai lu que ses scènes, pas la pièce."],
+    ["a4","Je connais déjà la réponse à « qu’est-ce que ce rôle me pose comme question ? »."],
+    ["a5","Je l’ai vu jouer et je voudrais refaire exactement pareil."],
+    ["a6","Son monde me semble très loin du mien et je ne vois aucun pont."],
+    ["a7","Le rôle est surtout narratif : récits, descriptions, longs monologues qui racontent au lieu de s’adresser à quelqu’un."]
+  ]}
+];
+
+const ATELIER = [
+  {id:"a1", title:"Le personnage débarque en cours", tag:"Manche 1", note:"Elle devient le début de ta note : pourquoi ce rôle.", fields:[
+    ["p1","Ton personnage entre dans la salle de cours : que fait-il en premier ?"],
+    ["p2","Complète : « Ce personnage me fait penser à … parce que … » (une personne, un lieu, une situation, sans te raconter)"],
+    ["p3","La réplique ou le moment qui m’accroche : où est-il, et qu’est-ce qu’il déclenche ?"],
+    ["p4","Pour convaincre un·e ami·e de venir voir ce rôle, je dirais…"]
+  ]},
+  {id:"a2", title:"À la chasse à l’axe", tag:"Manche 2", note:"Elle devient le cœur de ta note : ton axe. Un axe est une vraie question, à laquelle tu réponds en jouant, avec ton corps, ta voix, tes choix. Ce n’est ni un thème, ni une intention.", fields:[
+    ["x1","Qu’est-ce qui change pour ce personnage entre le début et la fin ?"],
+    ["x2","Qu’est-ce que je ne comprends pas encore chez lui ou chez elle ?"],
+    ["x3","Brouillon 1 : « Comment … va-t-il … ? »"],
+    ["x4","Brouillon 2 : « Dans quelle mesure … ? »"],
+    ["x5","Brouillon 3, à ma façon"]
+  ], checks:{title:"Passe chaque brouillon au test, puis garde le meilleur :", items:[
+    ["k1","C’est bien une question."],
+    ["k2","On peut y répondre de plusieurs façons au plateau."],
+    ["k3","Elle parle de tout le parcours du rôle, pas d’une seule scène."],
+    ["k4","Elle me donne envie d’essayer."]
+  ]}, after:[["axe","Mon axe retenu"]]},
+  {id:"a3", panel:"montage", title:"Le montage, version « best of »", tag:"Le montage", note:"Ces réponses deviennent le plan de ton montage.", fields:[
+    ["f1","Mon moment fort n°1 (acte, scène) et ce qu’il apporte à mon axe"],
+    ["f2","Mon moment fort n°2"],
+    ["f3","Mon moment fort n°3"],
+    ["f4","Si je n’ai que 10 minutes, ce que je coupe sans regret"],
+    ["f5","Mon montage commence par…"],
+    ["f6","Mon montage se termine sur…"]
+  ]},
+  {id:"a4", title:"Mes peurs, sans filtre", tag:"Manche 3", note:"Elle te permet de les regarder en face avant de monter sur le plateau.", fields:[
+    ["r1","Ce qui me fait peur dans ce rôle"],
+    ["r2","La scène que j’ai envie d’éviter, et pourquoi c’est peut-être la bonne"],
+    ["r3","Ce qui pourrait m’empêcher d’y arriver"],
+    ["r4","Ce que je peux mettre en place pour l’éviter (travail, aide, outil)"]
+  ]},
+  {id:"a5", title:"Ce que je veux apprendre", tag:"Manche 4", note:"Elle donne à ton parcours un objectif de travail.", fields:[
+    ["l1","Avec ce rôle, je veux travailler… (voix, corps, écoute, cible, énergie, autre chose)"],
+    ["l2","Dans trois semaines, je serai content·e si…"],
+    ["l3","Une question que je veux te poser"]
+  ]}
+];
+
+const FINAL = [
+  ["n1","J’ai choisi … dans … parce que …"],
+  ["n2","Mon axe : …"],
+  ["n3","Mon montage commence par …, passe par … et finit sur …"],
+  ["n4","Ce qui me fait peur, c’est … et je compte y répondre en …"],
+  ["n5","Avec ce parcours, je veux apprendre …"]
+];
+
+const RELIS = [
+  ["z1","Ma note tient sur une page."],
+  ["z2","J’explique pourquoi ce rôle, sans exposer ma vie privée."],
+  ["z3","Mon axe est une question."],
+  ["z4","J’écris à la première personne, avec mes mots."],
+  ["z5","Je n’ai pas raconté l’histoire de la pièce."]
+];
+
+/* ============ ÉTAT ============ */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+let state = {ident:{}, checks:{}, text:{}};
+try {
+  const saved = JSON.parse(localStorage.getItem(CONFIG.storageKey) || "null");
+  if (saved && typeof saved === "object") state = Object.assign(state, saved);
+} catch (e) { /* stockage indisponible : la page fonctionne quand même */ }
+
+let saveTimer;
+function save(){
+  try { localStorage.setItem(CONFIG.storageKey, JSON.stringify(state)); setStatus("Sauvegardé sur cet appareil"); }
+  catch (e) { setStatus("Sauvegarde automatique indisponible : télécharge tes réponses"); }
+}
+function saveSoon(){ clearTimeout(saveTimer); setStatus("…"); saveTimer = setTimeout(save, 400); }
+function setStatus(t){ $("#status").textContent = t; }
+
+/* ============ RENDU ============ */
+function checkRow(id, label){
+  const l = document.createElement("label");
+  l.className = "check";
+  const i = document.createElement("input");
+  i.type = "checkbox"; i.dataset.check = id; i.checked = !!state.checks[id];
+  const s = document.createElement("span"); s.textContent = label;
+  l.append(i, s);
+  return l;
+}
+function textField(id, label, rows){
+  const l = document.createElement("label");
+  l.className = "q";
+  const s = document.createElement("span"); s.textContent = label;
+  const t = document.createElement("textarea");
+  t.dataset.text = id; t.value = state.text[id] || ""; if (rows) t.rows = rows;
+  l.append(s, t);
+  return l;
+}
+
+(function build(){
+  const tr = $("#test-root");
+  TEST.forEach(m => {
+    const box = document.createElement("div");
+    box.className = "manche" + (m.alert ? " alerte" : "");
+    const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = m.tag;
+    const h = document.createElement("h3"); h.textContent = m.title; h.style.marginBottom = "6px";
+    box.append(tag, h);
+    m.items.forEach(([id, label]) => box.append(checkRow(id, label)));
+    tr.append(box);
+  });
+
+  ATELIER.forEach(m => {
+    const ar = $(m.panel === "montage" ? "#montage-root" : "#atelier-root");
+    const box = document.createElement("div"); box.className = "manche";
+    const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = m.tag;
+    const h = document.createElement("h3"); h.textContent = m.title;
+    const p = document.createElement("p"); p.className = "hint"; p.textContent = m.note;
+    box.append(tag, h, p);
+    m.fields.forEach(([id, label]) => box.append(textField(id, label)));
+    if (m.checks){
+      const c = document.createElement("p"); c.style.fontWeight = "600"; c.style.margin = "4px 0 2px"; c.textContent = m.checks.title;
+      box.append(c);
+      m.checks.items.forEach(([id, label]) => box.append(checkRow(id, label)));
+      const sp = document.createElement("div"); sp.style.height = "12px"; box.append(sp);
+    }
+    (m.after || []).forEach(([id, label]) => box.append(textField(id, label, 2)));
+    ar.append(box);
+  });
+
+  const fr = $("#final-root");
+  FINAL.forEach(([id, label]) => fr.append(textField(id, label)));
+  const rr = $("#relis-root");
+  RELIS.forEach(([id, label]) => rr.append(checkRow(id, label)));
+
+  $$("[data-ident]").forEach(i => { i.value = state.ident[i.dataset.ident] || ""; });
+})();
+
+/* ============ TEST : calcul du feu ============ */
+function computeTest(){
+  let pts = 0, alerts = 0, any = false;
+  TEST.forEach(m => m.items.forEach(([id]) => {
+    if (state.checks[id]) { any = true; if (m.sign > 0) pts++; else alerts++; }
+  }));
+  const final = pts - alerts;
+  let feu = final >= 11 ? "g" : final >= 6 ? "a" : "r";
+  let capped = "";
+  if (feu === "g" && state.checks.a7) { feu = "a"; capped = "narratif"; }
+  else if (feu === "g" && !(state.checks.e1 || state.checks.c5)) { feu = "a"; capped = "envie"; }
+  return {pts, alerts, final, feu, capped, any};
+}
+const MESSAGES = {
+  g:"Le rôle te donne de la matière, de la proximité et de l’envie. Passe à l’atelier de ta note.",
+  a:"Il y a quelque chose, mais un point est fragile. Regarde tes cases non cochées : c’est là qu’il faut creuser.",
+  r:"Ce rôle ne te sert pas, pour l’instant. Garde-le pour plus tard, ou cherche une autre porte d’entrée."
+};
+function renderTest(){
+  const r = computeTest();
+  ["r","a","g"].forEach(c => $("#lamp-" + c).classList.toggle("on", r.any && r.feu === c));
+  ["g","a","r"].forEach(c => $("#row-" + c).classList.toggle("me", r.any && r.feu === c));
+  if (!r.any){
+    $("#score").textContent = "Coche une case pour allumer le feu.";
+    $("#what").textContent = "";
+    return;
+  }
+  const name = {g:"Feu vert", a:"Feu orange", r:"Feu rouge"}[r.feu];
+  $("#score").textContent = name + " · score final " + r.final + " (" + r.pts + " point" + (r.pts > 1 ? "s" : "") + " sur 15, " + r.alerts + " alerte" + (r.alerts > 1 ? "s" : "") + ")";
+  const why = {
+    envie:"Règle d’or : sans « Il bouge » ni « J’ai envie de comprendre », le feu ne passe pas au vert. ",
+    narratif:"Règle d’or : un rôle surtout narratif ne passe pas au vert. Cherche les moments où le personnage parle à quelqu’un. "
+  }[r.capped] || "";
+  $("#what").textContent = why + MESSAGES[r.feu];
+}
+
+/* ============ NOTE : compteur ============ */
+function noteText(){
+  return FINAL.map(([id]) => (state.text[id] || "").trim()).filter(Boolean).join("\n\n");
+}
+function renderCount(){
+  const t = noteText();
+  const words = t ? t.split(/\s+/).length : 0;
+  $("#count").textContent = words ? words + " mots (une page, c’est environ 300 à 400 mots)." : "";
+}
+
+/* ============ ÉVÉNEMENTS ============ */
+document.addEventListener("change", e => {
+  const c = e.target.closest("[data-check]");
+  if (c){ state.checks[c.dataset.check] = c.checked; renderTest(); saveSoon(); }
+});
+document.addEventListener("input", e => {
+  const t = e.target.closest("[data-text]");
+  if (t){ state.text[t.dataset.text] = t.value; grow(t); renderCount(); saveSoon(); return; }
+  const i = e.target.closest("[data-ident]");
+  if (i){ state.ident[i.dataset.ident] = i.value; saveSoon(); }
+});
+function grow(t){ t.style.height = "auto"; t.style.height = Math.max(t.scrollHeight + 2, 74) + "px"; }
+
+function show(which){
+  ["test","atelier","montage"].forEach(n => {
+    $("#panel-" + n).hidden = n !== which;
+    $("#tab-" + n).setAttribute("aria-selected", String(n === which));
+  });
+  $$("#panel-" + which + " textarea").forEach(grow);
+  window.scrollTo({top:0});
+}
+$("#tab-test").onclick = () => show("test");
+$("#tab-atelier").onclick = () => show("atelier");
+$("#tab-montage").onclick = () => show("montage");
+$$("[data-goto]").forEach(a => a.onclick = e => { e.preventDefault(); show(a.dataset.goto); });
+
+/* ============ EXPORT ============ */
+function buildText(){
+  const L = [];
+  const id = state.ident;
+  const d = new Date().toLocaleDateString("fr-FR");
+  L.push("MON PARCOURS DE RÔLE");
+  L.push("Élève : " + (id.name || "—") + "   Rôle : " + (id.role || "—") + "   Pièce : " + (id.piece || "—") + "   Date : " + d);
+  L.push("");
+  const r = computeTest();
+  L.push("== TEST DU RÔLE ==");
+  L.push(r.any ? ({g:"Feu vert", a:"Feu orange", r:"Feu rouge"}[r.feu] + " — score final " + r.final + " (" + r.pts + " points, " + r.alerts + " alerte(s))") : "Pas encore rempli.");
+  TEST.forEach(m => {
+    L.push(""); L.push(m.title);
+    m.items.forEach(([cid, label]) => L.push((state.checks[cid] ? "[x] " : "[ ] ") + label));
+  });
+  [["== ATELIER DE LA NOTE ==", m => m.panel !== "montage"], ["== ATELIER DU MONTAGE ==", m => m.panel === "montage"]].forEach(([head, pick]) => {
+    L.push(""); L.push(head);
+    ATELIER.filter(pick).forEach(m => {
+      L.push(""); L.push(m.tag + " : " + m.title);
+      m.fields.forEach(([fid, label]) => { L.push("- " + label); L.push("  " + ((state.text[fid] || "").trim().replace(/\n/g, "\n  ") || "…")); });
+      if (m.checks) m.checks.items.forEach(([cid, label]) => L.push((state.checks[cid] ? "[x] " : "[ ] ") + label));
+      (m.after || []).forEach(([fid, label]) => { L.push("- " + label); L.push("  " + ((state.text[fid] || "").trim().replace(/\n/g, "\n  ") || "…")); });
+    });
+  });
+  L.push(""); L.push("== MA NOTE D’INTENTION (BROUILLON) =="); L.push("");
+  L.push(noteText() || "Pas encore rédigée.");
+  return L.join("\n");
+}
+function fileName(){
+  const slug = s => (s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  return "parcours-de-role" + (slug(state.ident.name) ? "-" + slug(state.ident.name) : "") + ".txt";
+}
+$("#b-dl").onclick = () => {
+  const blob = new Blob([buildText()], {type:"text/plain;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = fileName();
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  setStatus("Fichier téléchargé");
+};
+$("#b-copy").onclick = async () => {
+  try { await navigator.clipboard.writeText(buildText()); setStatus("Copié : tu peux le coller dans un mail ou un document"); }
+  catch (e) { setStatus("Copie impossible ici : utilise « Télécharger »"); }
+};
+$("#b-print").onclick = () => window.print();
+$("#b-reset").onclick = () => {
+  if (!confirm("Effacer toutes tes réponses sur cet appareil ? Cette action est définitive.")) return;
+  state = {ident:{}, checks:{}, text:{}};
+  try { localStorage.removeItem(CONFIG.storageKey); } catch (e) {}
+  location.reload();
+};
+if (CONFIG.endpoint){
+  const b = $("#b-send"); b.hidden = false;
+  b.onclick = async () => {
+    if (!state.ident.name) { setStatus("Ajoute ton prénom en haut avant d’envoyer."); $("#f-name").focus(); return; }
+    setStatus("Envoi…");
+    try {
+      const res = await fetch(CONFIG.endpoint, {method:"POST", headers:{"Content-Type":"application/json","Accept":"application/json"},
+        body: JSON.stringify({prenom:state.ident.name, role:state.ident.role, piece:state.ident.piece, message:buildText(), donnees:state})});
+      setStatus(res.ok ? "Envoyé, merci !" : "L’envoi a échoué : télécharge tes réponses et envoie-les par mail.");
+    } catch (e) { setStatus("L’envoi a échoué : télécharge tes réponses et envoie-les par mail."); }
+  };
+}
+
+renderTest(); renderCount();
+</script>
+</body>
+</html>
