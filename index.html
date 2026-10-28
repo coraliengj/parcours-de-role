@@ -42,7 +42,7 @@
   .wrap{max-width:860px;margin:0 auto}
   .top h1{font-family:var(--display);font-weight:600;font-size:clamp(30px,6vw,46px);line-height:1.1;margin:0 0 8px;letter-spacing:-.01em}
   .top p{margin:0 0 22px;color:#cfcde8;max-width:56ch}
-  .ident{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px}
+  .ident{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:22px}
   .ident label{display:block;font-size:13px;color:#cfcde8;margin-bottom:3px}
   .ident input{width:100%;padding:9px 11px;border-radius:8px;border:1px solid #5b5890;background:#2a2850;color:#fff;font:inherit;font-size:16px}
   .ident input::placeholder{color:#9b99c4}
@@ -136,11 +136,12 @@
 <header class="top">
   <div class="wrap">
     <h1>Mon parcours de rôle</h1>
-    <p>Deux outils pour t’aider à choisir ton rôle, puis à écrire ta note d’intention. Réponds vite, honnêtement : personne ne te note.</p>
+    <p>Trois outils pour choisir ton rôle, écrire ta note d’intention, puis construire ton montage. Ces questions sont pour vous ! Vous pouvez y répondre et me les envoyer si vous le souhaitez.</p>
     <div class="ident">
       <div><label for="f-name">Ton prénom</label><input id="f-name" data-ident="name" autocomplete="given-name" placeholder="Prénom"></div>
       <div><label for="f-role">Le rôle</label><input id="f-role" data-ident="role" placeholder="Nom du personnage"></div>
-      <div><label for="f-piece">La pièce</label><input id="f-piece" data-ident="piece" placeholder="Titre et auteur·rice"></div>
+      <div><label for="f-piece">La pièce</label><input id="f-piece" data-ident="piece" placeholder="Titre de la pièce"></div>
+      <div><label for="f-author">Nom de l’auteur·rice</label><input id="f-author" data-ident="author" placeholder="Auteur·rice"></div>
     </div>
     <div class="tabs" role="tablist" aria-label="Les deux outils">
       <button class="tab" role="tab" id="tab-test" aria-controls="panel-test" aria-selected="true">1 · Le test du rôle</button>
@@ -481,7 +482,7 @@ function buildText(){
   const id = state.ident;
   const d = new Date().toLocaleDateString("fr-FR");
   L.push("MON PARCOURS DE RÔLE");
-  L.push("Élève : " + (id.name || "—") + "   Rôle : " + (id.role || "—") + "   Pièce : " + (id.piece || "—") + "   Date : " + d);
+  L.push("Élève : " + (id.name || "—") + "   Rôle : " + (id.role || "—") + "   Pièce : " + (id.piece || "—") + "   Auteur·rice : " + (id.author || "—") + "   Date : " + d);
   L.push("");
   const r = computeTest();
   L.push("== TEST DU RÔLE ==");
@@ -533,7 +534,7 @@ if (CONFIG.endpoint){
     setStatus("Envoi…");
     try {
       const res = await fetch(CONFIG.endpoint, {method:"POST", headers:{"Content-Type":"application/json","Accept":"application/json"},
-        body: JSON.stringify({prenom:state.ident.name, role:state.ident.role, piece:state.ident.piece, message:buildText(), donnees:state})});
+        body: JSON.stringify({prenom:state.ident.name, role:state.ident.role, piece:state.ident.piece, auteur:state.ident.author, message:buildText(), donnees:state})});
       setStatus(res.ok ? "Envoyé, merci !" : "L’envoi a échoué : télécharge tes réponses et envoie-les par mail.");
     } catch (e) { setStatus("L’envoi a échoué : télécharge tes réponses et envoie-les par mail."); }
   };
