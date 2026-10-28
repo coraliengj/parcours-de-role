@@ -93,6 +93,8 @@
   textarea:focus{border-color:var(--violet)}
   .note-final .q span{font-weight:500;color:var(--ink-soft)}
   .count{font-size:14px;color:var(--ink-soft);margin:6px 0 0}
+  ul.expect{margin:0 0 12px;padding-left:22px}
+  ul.expect li{margin:0 0 8px}
   .nextlink{display:inline-block;margin-top:6px}
 
   /* ---------- barre d'actions ---------- */
@@ -136,7 +138,7 @@
 <header class="top">
   <div class="wrap">
     <h1>Mon parcours de rôle</h1>
-    <p>Trois outils pour choisir ton rôle, écrire ta note d’intention, puis construire ton montage. Ces questions sont pour vous ! Vous pouvez y répondre et me les envoyer si vous le souhaitez.</p>
+    <p>Quatre outils pour choisir ton rôle, écrire ta note d’intention, construire ton montage, puis monter ton dossier. Ces questions sont pour vous ! Vous pouvez y répondre et me les envoyer si vous le souhaitez.</p>
     <div class="ident">
       <div><label for="f-name">Ton prénom</label><input id="f-name" data-ident="name" autocomplete="given-name" placeholder="Prénom"></div>
       <div><label for="f-role">Le rôle</label><input id="f-role" data-ident="role" placeholder="Nom du personnage"></div>
@@ -145,8 +147,9 @@
     </div>
     <div class="tabs" role="tablist" aria-label="Les deux outils">
       <button class="tab" role="tab" id="tab-test" aria-controls="panel-test" aria-selected="true">1 · Le test du rôle</button>
-      <button class="tab" role="tab" id="tab-atelier" aria-controls="panel-atelier" aria-selected="false">2 · L’atelier de ma note</button>
+      <button class="tab" role="tab" id="tab-atelier" aria-controls="panel-atelier" aria-selected="false">2 · L’atelier de la note d’intention</button>
       <button class="tab" role="tab" id="tab-montage" aria-controls="panel-montage" aria-selected="false">3 · L’atelier du montage</button>
+      <button class="tab" role="tab" id="tab-dossier" aria-controls="panel-dossier" aria-selected="false">4 · L’atelier du dossier</button>
     </div>
   </div>
 </header>
@@ -214,7 +217,31 @@
     <h2>Atelier : construire mon montage</h2>
     <p class="lead">Ton montage dure une dizaine de minutes. Ici, tu choisis ce qui reste, ce qui part, et dans quel ordre. Garde ton axe sous les yeux : chaque extrait doit y répondre.</p>
     <div id="montage-root"></div>
-    <p><a class="nextlink" href="#" data-goto="atelier"><strong>Retour à l’atelier de ma note.</strong></a></p>
+    <p><a class="nextlink" href="#" data-goto="dossier"><strong>Montage prêt ? Passe à l’atelier du dossier.</strong></a></p>
+  </section>
+
+  <!-- ====================== DOSSIER ====================== -->
+  <section class="panel" id="panel-dossier" role="tabpanel" aria-labelledby="tab-dossier" hidden>
+    <h2>Atelier : construire mon dossier</h2>
+    <p class="lead">Le dossier rassemble tout ton travail de recherche et de réflexion. Ce n’est pas la note d’intention : la note tient sur une page et dit pourquoi ce rôle ; le dossier montre ce que tu as cherché, trouvé et imaginé pour y répondre.</p>
+
+    <div class="manche">
+      <span class="tag">Ce que j’attends</span>
+      <h3>Un dossier de projet, comme Résonances</h3>
+      <p class="hint">Un dossier qui donne envie d’être lu et qui prouve que tu as cherché. Il se compose de six parties :</p>
+      <ul class="expect">
+        <li><strong>Des inspirations.</strong> Œuvres, spectacles, films, images, musiques qui nourrissent ton projet, avec ce que chacune t’apporte.</li>
+        <li><strong>Des références sourcées.</strong> Chaque source se retrouve : auteur·rice, titre, date, lien ou page. Ce que tu avances, tu peux l’appuyer.</li>
+        <li><strong>Les recherches sur chacun des thèmes.</strong> Pour chaque thème de la pièce, ce que tu as trouvé et ce que ça change pour ton travail.</li>
+        <li><strong>L’axe choisi.</strong> Ta question, et la manière dont l’équipe va tenter d’y répondre au plateau.</li>
+        <li><strong>Des idées de mise en place.</strong> Espace, lumière, son, costumes, accessoires, jeu. Chaque idée se relie à l’axe.</li>
+        <li><strong>La distribution envisagée.</strong> Qui jouerait quoi, et pourquoi.</li>
+      </ul>
+      <p class="hint">Le dossier se remplit au fil du travail. Tu peux me l’envoyer en cours de route : je te répondrai, et tu le complèteras ensuite.</p>
+    </div>
+
+    <div id="dossier-root"></div>
+    <p><a class="nextlink" href="#" data-goto="montage"><strong>Retour à l’atelier du montage.</strong></a></p>
   </section>
 
   <p class="privacy">Tes réponses se sauvegardent toutes seules, sur cet appareil et dans ce navigateur. Pour les garder ou me les envoyer, utilise les boutons en bas de l’écran.</p>
@@ -310,7 +337,45 @@ const ATELIER = [
     ["l1","Avec ce rôle, je veux travailler… (voix, corps, écoute, cible, énergie, autre chose)"],
     ["l2","Dans trois semaines, je serai content·e si…"],
     ["l3","Une question que je veux te poser"]
-  ]}
+  ]},
+  {id:"d1", panel:"dossier", title:"Mes inspirations", tag:"Partie 1", note:"Ce qui nourrit ton projet : une œuvre, un spectacle, un film, une image, une musique, un lieu. Pour chacune, dis ce qu’elle t’apporte.", fields:[
+    ["i1","Inspiration n°1 : titre, auteur·rice, et ce qu’elle m’apporte"],
+    ["i2","Inspiration n°2"],
+    ["i3","Inspiration n°3"],
+    ["i4","Autres inspirations (une par ligne)"]
+  ]},
+  {id:"d2", panel:"dossier", title:"Mes références sourcées", tag:"Partie 2", note:"Une source se retrouve. Note l’auteur·rice, le titre, la date, et le lien ou la page. Évite les sources qu’on ne peut pas vérifier.", fields:[
+    ["s1","Mes sources (une par ligne : auteur·rice, titre, date, lien ou page)"],
+    ["s2","Ce que cette source m’a appris et que je n’aurais pas trouvé seul·e"]
+  ]},
+  {id:"d3", panel:"dossier", title:"Mes recherches, thème par thème", tag:"Partie 3", note:"Liste les thèmes de la pièce, puis cherche sur chacun. Pour chaque thème : ce que tu as trouvé, et ce que ça change pour ton travail au plateau.", fields:[
+    ["t1","Thème 1 : lequel ? Ce que j’ai trouvé, ce que ça change pour mon travail"],
+    ["t2","Thème 2 : lequel ? Ce que j’ai trouvé, ce que ça change pour mon travail"],
+    ["t3","Thème 3 : lequel ? Ce que j’ai trouvé, ce que ça change pour mon travail"],
+    ["t4","Un thème sur lequel je n’ai pas encore assez cherché"]
+  ]},
+  {id:"d4", panel:"dossier", title:"Mon axe et la façon d’y répondre", tag:"Partie 4", note:"Reprends ton axe, puis dis comment l’équipe va tenter d’y répondre au plateau, avec le corps, la voix et les choix de jeu.", fields:[
+    ["ax1","Mon axe (une question)"],
+    ["ax2","Comment l’équipe va tenter d’y répondre au plateau"],
+    ["ax3","Ce que j’espère qu’on verra ou qu’on ressentira dans la salle"]
+  ]},
+  {id:"d5", panel:"dossier", title:"Mes idées de mise en place", tag:"Partie 5", note:"Chaque idée doit se relier à l’axe : dis à chaque fois pourquoi tu la choisis.", fields:[
+    ["mp1","L’espace et le rapport scène / salle : mes idées, et pourquoi"],
+    ["mp2","La lumière et le son : mes idées, et pourquoi"],
+    ["mp3","Les costumes et les accessoires : mes idées, et pourquoi"],
+    ["mp4","Le jeu, le rythme, les partenaires : mes idées, et pourquoi"]
+  ]},
+  {id:"d6", panel:"dossier", title:"La distribution envisagée", tag:"Partie 6", note:"Qui jouerait quoi, et pourquoi ce choix. Si tu n’as pas de nom, décris le profil que tu cherches.", fields:[
+    ["di1","Rôle par rôle : qui, ou quel profil, et pourquoi"],
+    ["di2","Ce que cette distribution apporte à l’axe"]
+  ]},
+  {id:"d7", panel:"dossier", title:"Relis-toi", tag:"Avant de me rendre le dossier", note:"", fields:[], checks:{title:"", items:[
+    ["dz1","Chaque source est retrouvable : auteur·rice, titre, date, lien ou page."],
+    ["dz2","Chaque idée de mise en place est reliée à l’axe."],
+    ["dz3","J’ai cherché sur chacun des thèmes, pas seulement sur le plus facile."],
+    ["dz4","Mon axe est une question, et je dis comment l’équipe va y répondre."],
+    ["dz5","La distribution est justifiée, pas seulement listée."]
+  ]}}
 ];
 
 const FINAL = [
@@ -379,16 +444,15 @@ function textField(id, label, rows){
   });
 
   ATELIER.forEach(m => {
-    const ar = $(m.panel === "montage" ? "#montage-root" : "#atelier-root");
+    const ar = $(m.panel === "montage" ? "#montage-root" : m.panel === "dossier" ? "#dossier-root" : "#atelier-root");
     const box = document.createElement("div"); box.className = "manche";
     const tag = document.createElement("span"); tag.className = "tag"; tag.textContent = m.tag;
     const h = document.createElement("h3"); h.textContent = m.title;
-    const p = document.createElement("p"); p.className = "hint"; p.textContent = m.note;
-    box.append(tag, h, p);
+    box.append(tag, h);
+    if (m.note){ const p = document.createElement("p"); p.className = "hint"; p.textContent = m.note; box.append(p); }
     m.fields.forEach(([id, label]) => box.append(textField(id, label)));
     if (m.checks){
-      const c = document.createElement("p"); c.style.fontWeight = "600"; c.style.margin = "4px 0 2px"; c.textContent = m.checks.title;
-      box.append(c);
+      if (m.checks.title){ const c = document.createElement("p"); c.style.fontWeight = "600"; c.style.margin = "4px 0 2px"; c.textContent = m.checks.title; box.append(c); }
       m.checks.items.forEach(([id, label]) => box.append(checkRow(id, label)));
       const sp = document.createElement("div"); sp.style.height = "12px"; box.append(sp);
     }
@@ -464,7 +528,7 @@ document.addEventListener("input", e => {
 function grow(t){ t.style.height = "auto"; t.style.height = Math.max(t.scrollHeight + 2, 74) + "px"; }
 
 function show(which){
-  ["test","atelier","montage"].forEach(n => {
+  ["test","atelier","montage","dossier"].forEach(n => {
     $("#panel-" + n).hidden = n !== which;
     $("#tab-" + n).setAttribute("aria-selected", String(n === which));
   });
@@ -474,6 +538,7 @@ function show(which){
 $("#tab-test").onclick = () => show("test");
 $("#tab-atelier").onclick = () => show("atelier");
 $("#tab-montage").onclick = () => show("montage");
+$("#tab-dossier").onclick = () => show("dossier");
 $$("[data-goto]").forEach(a => a.onclick = e => { e.preventDefault(); show(a.dataset.goto); });
 
 /* ============ EXPORT ============ */
@@ -491,7 +556,7 @@ function buildText(){
     L.push(""); L.push(m.title);
     m.items.forEach(([cid, label]) => L.push((state.checks[cid] ? "[x] " : "[ ] ") + label));
   });
-  [["== ATELIER DE LA NOTE ==", m => m.panel !== "montage"], ["== ATELIER DU MONTAGE ==", m => m.panel === "montage"]].forEach(([head, pick]) => {
+  [["== ATELIER DE LA NOTE D’INTENTION ==", m => !m.panel], ["== ATELIER DU MONTAGE ==", m => m.panel === "montage"], ["== ATELIER DU DOSSIER ==", m => m.panel === "dossier"]].forEach(([head, pick]) => {
     L.push(""); L.push(head);
     ATELIER.filter(pick).forEach(m => {
       L.push(""); L.push(m.tag + " : " + m.title);
